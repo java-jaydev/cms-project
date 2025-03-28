@@ -1,16 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
 export default function RegisterPage() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [message, setMessage] = useState("");
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("회원가입 정보:", { name, email, password });
-		// TODO: API 연동 예정
+		try {
+			const res = await axios.post("http://localhost:8080/api/register", {
+				name,
+				email,
+				password,
+			});
+			setMessage("✔️ 회원가입 성공");
+			console.log("응답:", res.data);
+		} catch (err: any) {
+			setMessage("❌ 회원가입 실패");
+			console.error("에러:", err);
+		}
 	};
 
 	return (
@@ -66,6 +78,7 @@ export default function RegisterPage() {
 					등록
 				</button>
 			</form>
+			{message && <p className="mt-4 text-center">{message}</p>}
 		</div>
 	);
 }
